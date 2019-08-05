@@ -14,8 +14,8 @@ def fromDocToDictionary(app):
                        "currencyCode": o.currencyCode,
                        "formattedAmount": o.formattedAmount,
                        "checkoutFlowRequired": o.checkoutFlowRequired,
-                       "offerType": o.offerType,
-                       "saleEnds": o.saleEnds}
+                       "offerType": o.offerType}
+                       #"saleEnds": o.saleEnds}
                       for o in app.offer],
             "images": [{"imageType": img.imageType,
                         "width": img.dimension.width
