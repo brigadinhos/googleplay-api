@@ -606,6 +606,7 @@ class GooglePlayAPI(object):
                 str(cookie.name): str(cookie.value)
             }
             result['file'] = self._deliver_data(downloadUrl, cookies)
+            result['downloadUrl'] = downloadUrl
             if not expansion_files:
                 return result
             for obb in response.payload.deliveryResponse.appDeliveryData.additionalFile:
