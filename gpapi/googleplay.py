@@ -623,7 +623,7 @@ class GooglePlayAPI(object):
                 # a['file'] = self._deliver_data(obb.downloadUrl, None)
                 obb_urls.append(copy.deepcopy(obb.downloadUrl))
                 result['additionalData'].append(a)
-            result['obb_urls'] = obb_urls
+            result['obbs'] = obb_urls
             return result
 
     def download(self, packageName, versionCode=None, offerType=1, expansion_files=False):
