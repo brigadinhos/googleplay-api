@@ -1,5 +1,5 @@
 #!/usr/bin/python
-
+import copy
 from base64 import b64decode, urlsafe_b64encode
 from datetime import datetime
 
@@ -609,6 +609,7 @@ class GooglePlayAPI(object):
             result['downloadUrl'] = downloadUrl
             if not expansion_files:
                 return result
+            obb_urls = []
             for obb in response.payload.deliveryResponse.appDeliveryData.additionalFile:
                 a = {}
                 # fileType == 0 -> main
@@ -619,8 +620,10 @@ class GooglePlayAPI(object):
                     obbType = 'patch'
                 a['type'] = obbType
                 a['versionCode'] = obb.versionCode
-                a['file'] = self._deliver_data(obb.downloadUrl, None)
+                # a['file'] = self._deliver_data(obb.downloadUrl, None)
+                obb_urls.append(copy.deepcopy(obb.downloadUrl))
                 result['additionalData'].append(a)
+            result['obb_urls'] = obb_urls
             return result
 
     def download(self, packageName, versionCode=None, offerType=1, expansion_files=False):
