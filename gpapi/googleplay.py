@@ -639,7 +639,7 @@ class GooglePlayAPI(object):
                             download_data.split[2].downloadUrl + ""
                     }
                 }
-            result['appbundle'] = data
+                result['appbundle'] = data
             result['obbs'] = obb_urls
             return result
 
