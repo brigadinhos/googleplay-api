@@ -629,16 +629,13 @@ class GooglePlayAPI(object):
             if download_data.split:
                 result['aab'] = 1
                 data = {"base_apk": str(
-                    response.payload.deliveryResponse.appDeliveryData.downloadUrl),
-                    "splits": {
-                        download_data.split[0].name + "":
-                            download_data.split[0].downloadUrl + "",
-                        download_data.split[1].name + "":
-                            download_data.split[1].downloadUrl + "",
-                        download_data.split[2].name + "":
-                            download_data.split[2].downloadUrl + ""
-                    }
-                }
+                    response.payload.deliveryResponse.appDeliveryData
+                        .downloadUrl)}
+                data['splits'] = []
+                for split in download_data.split:
+                    data['splits'].append({
+                        split.name + "": split.downloadUrl + ""
+                    })
                 result['appbundle'] = data
             result['obbs'] = obb_urls
             return result
