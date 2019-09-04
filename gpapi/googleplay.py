@@ -623,6 +623,23 @@ class GooglePlayAPI(object):
                 # a['file'] = self._deliver_data(obb.downloadUrl, None)
                 obb_urls.append(copy.deepcopy(obb.downloadUrl))
                 result['additionalData'].append(a)
+            result['appbundle'] = []
+            result['aab'] = 0
+            download_data = response.payload.deliveryResponse.appDeliveryData
+            if download_data.split:
+                result['aab'] = 1
+                data = {"base_apk": str(
+                    response.payload.deliveryResponse.appDeliveryData.downloadUrl),
+                    "splits": {
+                        download_data.split[0].name + "":
+                            download_data.split[0].downloadUrl + "",
+                        download_data.split[1].name + "":
+                            download_data.split[1].downloadUrl + "",
+                        download_data.split[2].name + "":
+                            download_data.split[2].downloadUrl + ""
+                    }
+                }
+            result['appbundle'] = data
             result['obbs'] = obb_urls
             return result
 
@@ -730,58 +747,6 @@ class GooglePlayAPI(object):
                 a['file'] = self._deliver_data(obb.downloadUrl, None)
                 result['additionalData'].append(a)
             return result
-        
-    def download_appbundle(self, packageName, versionCode=None, offerType=1,
-                     expansion_files=False):
-        """Download an app and return its raw data (APK file). Free apps need
-        to be "purchased" first, in order to retrieve the download cookie.
-        If you want to download an already purchased app, use *delivery* method.
-         Args:
-            packageName (str): app unique ID (usually starting with 'com.')
-            versionCode (int): version to download
-            offerType (int): different type of downloads (mostly unused for apks)
-            downloadToken (str): download token returned by 'purchase' API
-            progress_bar (bool): wether or not to print a progress bar to stdout
-         Returns
-            Dictionary containing apk data and optional expansion files
-            (see *delivery*)
-        """
-
-        if self.authSubToken is None:
-            raise Exception("You need to login before executing any request")
-
-        if versionCode is None:
-            # pick up latest version
-            versionCode = self.details(packageName).get('versionCode')
-            print(versionCode)
-
-        headers = self.getHeaders()
-
-        response = requests.get(DELIVERY_URL, params={
-            'doc': packageName,
-            'ot': str(offerType),
-            'vc': versionCode,
-        }, headers=headers)
-        response = googleplay_pb2.ResponseWrapper.FromString(response.content)
-        # print(response)
-        if response.commands.displayErrorMessage != "":
-            raise RequestError(response.commands.displayErrorMessage)
-        elif response.payload.deliveryResponse.appDeliveryData.downloadUrl == "":
-            raise RequestError('App not purchased')
-        else:
-            download_data = response.payload.deliveryResponse.appDeliveryData
-            data = {"base_apk": str(
-                response.payload.deliveryResponse.appDeliveryData.downloadUrl),
-                    "splits": {
-                        download_data.split[0].name + "":
-                            download_data.split[0].downloadUrl + "",
-                        download_data.split[1].name + "":
-                            download_data.split[1].downloadUrl + "",
-                        download_data.split[2].name + "":
-                            download_data.split[2].downloadUrl + ""
-                    }
-            }
-            return data
 
     def log(self, docid):
         log_request = googleplay_pb2.LogRequest()
