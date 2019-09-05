@@ -621,7 +621,10 @@ class GooglePlayAPI(object):
                 a['type'] = obbType
                 a['versionCode'] = obb.versionCode
                 # a['file'] = self._deliver_data(obb.downloadUrl, None)
-                obb_urls.append(copy.deepcopy(obb.downloadUrl))
+                obb_urls.append(copy.deepcopy({
+                    'obb_downloadUrl': obb.downloadUrl,
+                    'obb_type': obbType
+                }))
                 result['additionalData'].append(a)
             result['appbundle'] = []
             result['aab'] = 0
