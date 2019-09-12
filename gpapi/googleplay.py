@@ -593,9 +593,9 @@ class GooglePlayAPI(object):
                                 proxies=self.proxies_config)
         response = googleplay_pb2.ResponseWrapper.FromString(response.content)
         if response.commands.displayErrorMessage != "":
-            raise RequestError(response.commands.displayErrorMessage)
+            return {"error_message": response.commands.displayErrorMessage}
         elif response.payload.deliveryResponse.appDeliveryData.downloadUrl == "":
-            raise RequestError('App not purchased')
+            return {"error_message": "App not purchased"}
         else:
             result = {}
             result['docId'] = packageName
@@ -679,7 +679,7 @@ class GooglePlayAPI(object):
 
         response = googleplay_pb2.ResponseWrapper.FromString(response.content)
         if response.commands.displayErrorMessage != "":
-            raise RequestError(response.commands.displayErrorMessage)
+            return {'error_message': response.commands.displayErrorMessage}
         else:
             dlToken = response.payload.buyResponse.downloadToken
             return self.delivery(packageName, versionCode, offerType, dlToken,
